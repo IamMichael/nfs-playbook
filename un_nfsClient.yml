@@ -5,6 +5,7 @@
         name: "{{ item }}"
         state: stopped
       with_items:
+        - "nfs-mount"
         - "rpcbind"
       ignore_errors: true
 
