@@ -1,4 +1,5 @@
 ```
+基于CentOS7.5 Minimal 安装测试
 关于nfs用于搭建本地仓库做离线的主包及其依赖
 # yum -y install yum-utils
 # yum -y install createrepo
