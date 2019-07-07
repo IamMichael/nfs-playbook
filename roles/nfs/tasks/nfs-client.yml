@@ -54,7 +54,7 @@
     mode: 0640
 
 
-- name: "Start nfs client"
+- name: "Start nfs mount service"
   systemd:
     name: "{{ item }}"
     state: started
@@ -63,4 +63,21 @@
   with_items:
     - rpcbind
     - nfs-mount
+
+
+- name: "Show nfs-mount status"
+  shell: "systemctl status nfs-mount.service"
+  register: result
+
+
+#- name: "Print nfs-mount status"
+#  debug:
+#    msg: "{{ result.stdout_lines }}"
+
+- name: "Print nfs-mount status"
+  debug: 
+    var: result.stdout_lines
+
+
+
 
