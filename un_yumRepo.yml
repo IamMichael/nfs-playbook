@@ -1,0 +1,17 @@
+- hosts: g_nfs
+  tasks:
+    - include_role:
+        name: yumRepo
+        tasks_from: un_yumRepo.yml
+
+
+#- hosts: g_nfs
+#  tasks:
+#    - name: "Remove nfs yumRepo"
+#      file:
+#        path: "{{ item }}"
+#        state: absent
+#      with_items:
+#        - "{{ yum_dir }}"
+#        - "/etc/yum.repos.d/NFS.repo"
+

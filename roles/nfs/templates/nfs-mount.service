@@ -1,0 +1,16 @@
+[Unit]
+Description=NFS mount service
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+ExecStart=/usr/bin/mount -t nfs -o nosuid,noexec,nodev,rw -o bg,soft,rsize=32768,wsize=32768 {{ hostvars['h_nfs_server']['ansible_ssh_host'] }}:{{ nfs_server_sysnc_path }} {{ nfs_client_sysnc_path }}
+ExecStart=/usr/bin/mount -t nfs -o nosuid,noexec,nodev,rw -o bg,soft,rsize=32768,wsize=32768 {{ hostvars['h_nfs_server']['ansible_ssh_host'] }}:{{ nfs_server_asysnc_path }} {{ nfs_client_asysnc_path }}
+
+ExecStop=/usr/bin/umount -l {{ nfs_client_sysnc_path }}
+ExecStop=/usr/bin/umount -l {{ nfs_client_asysnc_path }}
+
+[Install]
+WantedBy=multi-user.target

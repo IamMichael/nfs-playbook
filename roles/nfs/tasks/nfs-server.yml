@@ -1,0 +1,109 @@
+---
+
+- name: "Create user group"
+  group:
+    name: "{{ group_name }}"
+    state: present
+
+
+- name: "Creat user"
+  user:
+    name: "{{ user_name }}"
+    comment: "NFS USER"
+    uid: "{{ uid }}"
+    group: "{{ group_name }}"
+    state: present
+
+
+- name: "Create nfs shared folder"
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0750
+  with_items:
+    - "{{ nfs_server_sysnc_path }}"
+    - "{{ nfs_server_asysnc_path }}"
+
+
+- name: "Install nfs server"
+  yum:
+    name:
+      - nfs-utils
+      - rpcbind
+    state: present
+    enablerepo: "nfs"
+    disablerepo: "*"
+
+
+- name: "Copy nfs server config file"
+  template:
+    src: exports
+    dest: /etc
+    mode: 0640
+
+
+- name: "Start nfs server"
+  systemd:
+    name: "{{ item }}"
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  with_items:
+    - rpcbind
+    - nfs-server
+    - firewalld
+
+
+- name: "Set firewalld"
+  firewalld:
+     service: "{{ item }}"
+     permanent: yes
+     state: enabled
+     immediate: yes
+  with_items:
+    - nfs
+    - mountd
+    - rpc-bind
+
+
+- name: "Set nofile and nproc"
+  pam_limits:
+    domain: "*"
+    dest: "/etc/security/limits.conf"
+    limit_type: "{{ item.limit_type }}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { limit_type: '-', limit_item: 'nofile', value: 65536 }
+    - { limit_type: '-', limit_item: 'nproc', value: 65536 }
+    - { limit_type: 'soft', limit_item: 'memlock', value: unlimited }
+    - { limit_type: 'hard', limit_item: 'memlock', value: unlimited }
+
+
+- name: "Reload system setting"
+  shell: sysctl --system
+
+
+- name: "Reboot System"
+  command: "/usr/sbin/shutdown -r +1"
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+
+- name: "Wait for 30s"
+  pause: seconds=30
+
+
+- name: "Wait for Restart"
+  shell: "echo > /dev/tcp/{{ ansible_ssh_host }}/22"
+  args:
+    executable: /bin/bash
+  register: result
+  until: result.rc == 0
+  retries: 30
+  delay: 10
+  delegate_to: localhost
+

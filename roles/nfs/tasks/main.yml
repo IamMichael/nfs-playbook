@@ -1,0 +1,9 @@
+- name: "Install nfs server"
+  include_tasks: nfs-server.yml
+  when: "'g_nfs_server' in group_names"
+
+
+- name: "Install nfs client"
+  include_tasks: nfs-client.yml
+  when: "'g_nfs_client' in group_names"
+

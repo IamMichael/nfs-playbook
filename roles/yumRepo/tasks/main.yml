@@ -1,0 +1,26 @@
+---
+
+- name: Create yum folder
+  file:
+    dest: "{{ yum_dir }}"
+    state: directory
+
+- name: Copy nfs.tar.gz
+  unarchive:
+    src: nfs.tar.gz
+    dest: "{{ yum_dir }}"
+
+- name: Add repository
+  yum_repository:
+    file: NFS
+    name: nfs
+    description: NFS YUM repo
+    baseurl: file://{{ yum_dir }}
+    enabled: yes
+    gpgcheck: no
+
+- name: Clean yum cache
+  command: yum clean all
+  args:
+    warn: no
+

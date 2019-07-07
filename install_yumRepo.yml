@@ -1,0 +1,4 @@
+- hosts: g_nfs
+  roles:
+    - yumRepo
+

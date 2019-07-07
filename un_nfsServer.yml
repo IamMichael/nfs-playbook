@@ -1,0 +1,32 @@
+- hosts: g_nfs_server
+  tasks:
+    - name: "Stop nfs server"
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+      with_items:
+        - "rpcbind"
+        - "nfs-server"
+      ignore_errors: true
+
+
+    - name: "Remove nfs rpm"
+      yum:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - rpcbind
+        - nfs-utils
+      ignore_errors: true
+
+
+    - name: "Remove nfs server file"
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "/etc/exports"
+        - "{{ nfs_server_sysnc_path }}"
+        - "{{ nfs_server_asysnc_path }}"
+      ignore_errors: true
+

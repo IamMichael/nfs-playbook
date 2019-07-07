@@ -1,0 +1,17 @@
+h_nfs_server     ansible_ssh_host=192.168.1.103  ansible_ssh_pass='123456' ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+h_nfs_client01   ansible_ssh_host=192.168.1.105  ansible_ssh_pass='123456' ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+h_nfs_client02   ansible_ssh_host=192.168.1.106  ansible_ssh_pass='123456' ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[g_nfs_server]
+h_nfs_server
+
+[g_nfs_client]
+h_nfs_client01
+h_nfs_client02
+
+[g_nfs]
+h_nfs_server
+h_nfs_client01
+h_nfs_client02
+

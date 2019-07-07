@@ -1,0 +1,66 @@
+---
+
+- name: "Create user group"
+  group:
+    name: "{{ group_name }}"
+    state: present
+
+
+- name: "Creat user"
+  user:
+    name: "{{ user_name }}"
+    comment: "NFS USER"
+    uid: "{{ uid }}"
+    group: "{{ group_name }}"
+    state: present
+
+
+- name: "Set selinux mode"
+  selinux:
+    policy: targeted
+    state: permissive
+
+
+- name: "Reload selinux setting"
+  shell: "setenforce 0"
+
+
+- name: "Create nfs client folder"
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    mode: 0750
+  with_items:
+    - "{{ nfs_client_sysnc_path }}"
+    - "{{ nfs_client_asysnc_path }}"
+
+
+- name: "Install nfs client"
+  yum:
+    name:
+      - nfs-utils
+      - rpcbind
+    state: present
+    enablerepo: "nfs"
+    disablerepo: "*"
+
+
+- name: "Copy nfs config file"
+  template:
+    src: nfs-mount.service
+    dest: /etc/systemd/system
+    mode: 0640
+
+
+- name: "Start nfs client"
+  systemd:
+    name: "{{ item }}"
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  with_items:
+    - rpcbind
+    - nfs-mount
+

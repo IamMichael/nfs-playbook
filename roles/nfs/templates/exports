@@ -1,0 +1,5 @@
+# sync
+{{ nfs_server_sysnc_path }}  {% for host in groups['g_nfs_client'] -%} {{ hostvars[host]['ansible_ssh_host'] }}(rw,sync,anonuid={{ uid }}){{ ' ' }} {%- endfor %}
+
+# async
+{{ nfs_server_asysnc_path }} {% for host in groups['g_nfs_client']-%}  {{ hostvars[host]['ansible_ssh_host'] }}(rw,async,anonuid={{ uid }}){{ ' ' }} {%- endfor %}

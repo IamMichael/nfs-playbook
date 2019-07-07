@@ -1,0 +1,19 @@
+user_name: "test"
+group_name: "test"
+uid: 2019
+gid: 2019
+
+yum_dir: "/tmp/nfs"
+
+nfs_server_sysnc_path: "/opt/share/sync"
+nfs_server_asysnc_path: "/opt/share/async"
+
+nfs_client_sysnc_path: "/opt/client/sync"
+nfs_client_asysnc_path: "/opt/client/async"
+
+
+
+
+
+
+
