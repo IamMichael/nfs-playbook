@@ -9,4 +9,15 @@
 # tar -zcf  nfs.tar.gz  ./*
 
 # cp nfs.tar.gz role/yumRepo/files
+
+
+安装nfsServer和nfsClient
+# ansible-playbook -i hosts  install_nfs.yml
+
+卸载nfsClient、nfsClient 和 本地仓库
+# ansible-playbook -i hosts un_nfsClient.yml
+# ansible-playbook -i hosts un_nfsServer.yml
+# ansible-playbook -i hosts un_yumRepo.yml
+
+
 ```
